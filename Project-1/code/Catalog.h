@@ -6,6 +6,8 @@
 #include <iostream>
 
 #include "Schema.h"
+#include "TwoWayList.h"
+#include "sqlite3.h"
 
 using namespace std;
 
@@ -17,6 +19,18 @@ private:
 	 * Efficient data structures are recommended.
 	 * Avoid linear traversals when possible.
 	 */
+	vector<Schema> schemas;
+	vector<string> schemaN;
+	vector<int> schemaT;
+	vector<string> schemaL;
+	sqlite3* db;
+	sqlite3_stmt* stmt;
+	int rc;
+	char *zErrMsg;
+	vector<string> attributes, types;
+	vector<unsigned int>distincts;
+	bool sent;
+	string tempN;
 
 public:
 	/* Catalog constructor.
@@ -96,6 +110,7 @@ public:
 	 * ...
 	 * Tables/attributes are sorted in ascending alphabetical order.
 	 */
+	static int putStuffIn(void* catalog, int argc, char** argv, char ** azColName);
 	friend ostream& operator<<(ostream& _os, Catalog& _c);
 };
 
