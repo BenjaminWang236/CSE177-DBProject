@@ -50,8 +50,10 @@ int main () {
 	Catalog c(dbFile);
 
 	c.CreateTable(table, attributes, types);
-
+	string filepath = "urmomma";
+	c.SetDataFile(table,filepath);
+	unsigned int sigh = 6;
+	c.SetNoTuples(table,sigh);
 	cout << c << endl;
-
 	return 0;
 }

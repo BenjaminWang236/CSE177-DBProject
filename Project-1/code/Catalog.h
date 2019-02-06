@@ -27,7 +27,7 @@ private:
 	sqlite3_stmt* stmt;
 	int rc;
 	char *zErrMsg;
-	vector<string> attributes, types;
+	vector<string> attributes, types, tNames;
 	vector<unsigned int>distincts;
 	bool sent;
 	string tempN;
@@ -110,8 +110,24 @@ public:
 	 * ...
 	 * Tables/attributes are sorted in ascending alphabetical order.
 	 */
-	static int putStuffIn(void* catalog, int argc, char** argv, char ** azColName);
+
 	friend ostream& operator<<(ostream& _os, Catalog& _c);
+
+	static int putStuffIn(void* catalog, int argc, char** argv, char ** azColName);
+
+	vector<string> getSchemaN(){
+		return schemaN;
+	}
+	vector<string> getSchemaL(){
+		return schemaL;
+	}
+	vector<int> getSchemaT(){
+		return schemaT;
+	}
+	vector<Schema> getSchemas(){
+		return schemas;
+	}
+	void print();
 };
 
 #endif //_CATALOG_H
