@@ -28,14 +28,12 @@ Catalog::Catalog(string& _fileName) {
 			unsigned int numDistinct = sqlite3_column_int(stmt,2);
 			string tName = reinterpret_cast<const char*> (sqlite3_column_text(stmt,3));
 			if(tName != tempN){
-				if(tempN == "sentinel"){
-					tempN = tName;
-				}
+				tempN = tName;
 				//cout << tempN << " " <<sqlite3_column_int(stmt,4) << " "<< reinterpret_cast<const char*> (sqlite3_column_text(stmt,5)) <<endl;
 				schemaN.push_back(tempN);
 				schemaT.push_back(sqlite3_column_int(stmt,4));
 				schemaL.push_back(reinterpret_cast<const char*> (sqlite3_column_text(stmt,5)));
-				tempN = tName;
+				
 
 			}
 
@@ -60,9 +58,9 @@ Catalog::Catalog(string& _fileName) {
    				//cout << schemaN[i] << " ";
 	   			for(int j = 0; j < attributes.size();j++){
 	   				if(tNames[j] == schemaN[i]){
-	   					//cout << attributes[j] << " ";
-	   					//cout << types[j] << " ";
-	   					//cout << distincts[j] << endl;
+	   					// cout << attributes[j] << " ";
+	   					// cout << types[j] << " ";
+	   					// cout << distincts[j] << endl;
 	   					aN.push_back(attributes[j]);
 	   					aT.push_back(types[j]);
 	   					aD.push_back(distincts[j]);
@@ -112,6 +110,7 @@ int Catalog::putStuffIn(void* catalog, int argc, char** argv, char ** azColName)
 
 }
 Catalog::~Catalog() {
+	cout << "Destructor" << endl;
 	Save();
 
 
@@ -273,26 +272,40 @@ bool Catalog::GetSchema(string& _table, Schema& _schema) {
 
 bool Catalog::CreateTable(string& _table, vector<string>& _attributes,
 	vector<string>& _attributeTypes) {
+
 	for(int i = 0; i < schemaN.size();i++){
 		if(schemaN[i] == _table){
+			cout << "Table with same name" << endl;
 			return false;
 		}
 	}
+	if(_attributes.size() == 0){
+		cout << "0 Attributes" << endl;
+		return false;
+	}	
 	if(_attributeTypes.size()!= _attributes.size()){
+		cout << "NoTypes don't match NoAttributes" << endl;
 		return false;
 	}
 	for(int i = 0; i < _attributes.size();i++){
 		for(int j = 0; j < _attributes.size();j++){
-			if(_attributes[i] == _attributes[j]){
+			if(_attributes[i] == _attributes[j] && i!= j){
+				cout << "Two attributes same name" << endl;
 				return false;
 			}
 		}
 	}
+
 	for(int i = 0; i < _attributeTypes.size();i++){
-		if(_attributeTypes[i]!= "INTEGER"|| _attributeTypes[i]!= "STRING"|| _attributeTypes[i]!= "FLOAT"){
+
+		if(_attributeTypes[i]== "INTEGER"|| _attributeTypes[i]== "STRING"|| _attributeTypes[i]== "FLOAT"){
+
+		}else{
+			cout << _attributeTypes[i] << endl;			
 			return false;
 		}
 	}
+
 	schemaN.push_back(_table);
 	vector<unsigned int> _noDistinct;
 	for(int i = 0; i < _attributes.size();i++){
@@ -308,10 +321,12 @@ bool Catalog::CreateTable(string& _table, vector<string>& _attributes,
 bool Catalog::DropTable(string& _table) {
 	for(int i = 0; i < schemas.size();i++){
 		if(schemaN[i] == _table){
+			//cout << schemaN[i] << endl;
 			schemaN.erase(schemaN.begin()+i);
 			schemaT.erase(schemaT.begin()+i);
 			schemaL.erase(schemaL.begin()+i);
 			schemas.erase(schemas.begin()+i);
+			//cout << schemaN[i]<< endl;
 			return true;
 		}
 	}
@@ -333,7 +348,8 @@ ostream& operator<<(ostream& _os, Catalog& _c) {
 	return _os;
 }
 void Catalog::print(){
-			for(int i = 0; i < getSchemaN().size();i++){
+	cout << "START PRINT" << endl;
+	for(int i = 0; i < getSchemaN().size();i++){
 		fprintf(stdout,"%s \t %u \t %s\n",getSchemaN()[i].c_str(),getSchemaT()[i],getSchemaL()[i].c_str());
 		vector<Attribute> temp = getSchemas()[i].GetAtts();
 		for(int j = 0; j < temp.size();j++){
@@ -344,4 +360,5 @@ void Catalog::print(){
 			fprintf(stdout,"\t %s \t %s \t %u\n",temp[j].name.c_str(),typeT.c_str(),temp[j].noDistinct);
 		}
 	}	
+	cout << "END PRINT" << endl;
 }
