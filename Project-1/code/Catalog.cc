@@ -19,7 +19,7 @@ Catalog::Catalog(string& _fileName) {
     	fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
    	} else {
     	fprintf(stderr, "Opened database successfully\n");
-    	string selAtt = "SELECT a.name,a.type,a.numDistVal,a.tName,t.numTuples,t.fileLoc FROM attributes a,tables t WHERE a.tName = t.name ORDER BY a.tName";
+    	string selAtt = "SELECT a.name,a.type,a.numDistVal,a.tName,t.numTuples,t.fileLoc FROM attributes a,tables t WHERE a.tName = t.name";
     	rc = sqlite3_prepare_v2( db, selAtt.c_str(), -1, &stmt, 0 );
     	while ( (rc = sqlite3_step(stmt)) == SQLITE_ROW) {                                              
 			string name = reinterpret_cast<const char*> (sqlite3_column_text(stmt,0)); 
@@ -73,7 +73,7 @@ Catalog::Catalog(string& _fileName) {
 	   			}
 	   		}
 	     	fprintf(stdout, "Table copied successfully\n");
-	     	//print();
+	     	print();
 
 
 	   }
@@ -150,7 +150,7 @@ bool Catalog::Save() {
 		rc = sqlite3_step(stmt);
 
 		if (rc != SQLITE_DONE) {
-		    printf("ERROR inserting data: %s\n", sqlite3_errmsg(db));
+			printf("ERROR inserting data: %s\n", sqlite3_errmsg(db));
 		}
 
 
@@ -175,7 +175,7 @@ bool Catalog::Save() {
 			rc = sqlite3_step(stmt);
 			if (rc != SQLITE_DONE) {
 				
-			    printf("ERROR inserting data: %s\n", sqlite3_errmsg(db));
+				printf("ERROR inserting data: %s\n", sqlite3_errmsg(db));
 
 			}				   			
 		}
@@ -321,12 +321,22 @@ bool Catalog::CreateTable(string& _table, vector<string>& _attributes,
 bool Catalog::DropTable(string& _table) {
 	for(int i = 0; i < schemas.size();i++){
 		if(schemaN[i] == _table){
-			//cout << schemaN[i] << endl;
-			schemaN.erase(schemaN.begin()+i);
-			schemaT.erase(schemaT.begin()+i);
-			schemaL.erase(schemaL.begin()+i);
-			schemas.erase(schemas.begin()+i);
-			//cout << schemaN[i]<< endl;
+			vector<string> sN = schemaN;
+			vector<int> sT = schemaT;
+			vector<string> sL = schemaL;
+			vector<Schema> s = schemas;
+			schemaN.clear();
+			schemaT.clear();
+			schemaL.clear();
+			schemas.clear();
+			for(int j = 0; j < sN.size();j++){
+				if(j != i){
+					schemaN.push_back(sN[j]);
+					schemaT.push_back(sT[j]);
+					schemaL.push_back(sL[j]);
+					schemas.push_back(s[j]);
+				}
+			}
 			return true;
 		}
 	}
