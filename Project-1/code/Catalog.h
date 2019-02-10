@@ -18,19 +18,20 @@ private:
 	 * A series of data structures you may find useful are included.
 	 * Efficient data structures are recommended.
 	 * Avoid linear traversals when possible.
-	 */
-	vector<Schema> schemas;
-	vector<string> schemaN;
-	vector<int> schemaT;
-	vector<string> schemaL;
-	sqlite3* db;
-	sqlite3_stmt* stmt;
-	int rc;
-	char *zErrMsg;
-	vector<string> attributes, types, tNames;
-	vector<unsigned int>distincts;
-	bool sent;
-	string tempN;
+	 */							
+	 							//An element of a vectors corresponds to other elements in other vectors based on index number
+	vector<Schema> schemas;		//Vector to hold all the schemas
+	vector<string> schemaN;		//Vector to contain table names
+	vector<int> schemaT;		//Vector to contain number of tuples
+	vector<string> schemaL;		//Vector to contain Datafile
+	sqlite3* db;				//Database
+	sqlite3_stmt* stmt;			//Statement variable
+	int rc;						//Integer to hold SQLite messages
+	char *zErrMsg;				//To handle error messages.
+	vector<string> attributes, types, tNames;	//Total vectors; Vectors to contain all the info from databases, they are used to fill out the vectors above.
+	vector<unsigned int>distincts;	
+	string tempN;				//Temporary helper variable
+	bool error;
 
 public:
 	/* Catalog constructor.
@@ -113,8 +114,9 @@ public:
 
 	friend ostream& operator<<(ostream& _os, Catalog& _c);
 
-	static int putStuffIn(void* catalog, int argc, char** argv, char ** azColName);
+	//static int putStuffIn(void* catalog, int argc, char** argv, char ** azColName);
 
+	//Helper functions to work with overloaded <<
 	vector<string> getSchemaN(){
 		return schemaN;
 	}
@@ -127,6 +129,7 @@ public:
 	vector<Schema> getSchemas(){
 		return schemas;
 	}
+	//Lazy printing for me
 	void print();
 };
 

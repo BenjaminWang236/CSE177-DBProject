@@ -39,9 +39,12 @@ int main (int argc, char* argv[]) {
 
 			string aType;
 			int at = j % 3; //???? Shouldn't it be all caps?
-			if (0 == at) aType = "INTEGER";
-			else if (1 == at) aType = "FLOAT";
-			else if (2 == at) aType = "STRING";
+			// if (0 == at) aType = "INTEGER";
+			// else if (1 == at) aType = "FLOAT";
+			// else if (2 == at) aType = "STRING";
+			if (0 == at) aType = "Integer";
+			else if (1 == at) aType = "Float";
+			else if (2 == at) aType = "String";
 			types.push_back(aType);
 		}
 
@@ -67,61 +70,61 @@ int main (int argc, char* argv[]) {
 	}
 
 
+	//////////////////////////// DONE
+	catalog.Save();
+	cout << catalog << endl; cout.flush();
+
+
 	////////////////////////////// DONE
-	// catalog.Save();
-	// cout << catalog << endl; cout.flush();
+	vector<string> tables;
+	catalog.GetTables(tables);
+	for (vector<string>::iterator it = tables.begin();
+		 it != tables.end(); it++) {
+		cout << *it << endl;
+	}
+	cout << endl;
 
 
-	// ////////////////////////////// DONE
-	// vector<string> tables;
-	// catalog.GetTables(tables);
-	// for (vector<string>::iterator it = tables.begin();
-	// 	 it != tables.end(); it++) {
-	// 	cout << *it << endl;
-	// }
-	// cout << endl;
+	////////////////////////Outputs Garbage?
+	for (int i = 0; i < 1000; i++) {
+		int r = rand() % tNo + 1;
+		char tN[20]; sprintf(tN, "T_%d", r);
+		string tName = tN;
+
+		unsigned int tuples;
+		catalog.GetNoTuples(tName, tuples);
+		cout << tName << " tuples = " << tuples << endl;
+
+		string path;
+		catalog.GetDataFile(tName, path);
+		cout << tName << " path = " << path << endl;
+
+		vector<string> atts;
+		catalog.GetAttributes(tName, atts);
+		for (vector<string>::iterator it = atts.begin();
+			 it != atts.end(); it++) {
+			cout << *it << " ";
+		}
+		cout << endl;
+
+		Schema schema;
+		catalog.GetSchema(tName, schema);
+		cout << schema << endl;
+
+		////////////////////////////////
+		for (int j = 0; j < 10; j++) {
+			int s = rand() % (r * aNo) + 1;
+			char aN[20]; sprintf(aN, "A_%d_%d", r, s);
+			string aName = aN;
+
+			unsigned int distinct;
+			catalog.GetNoDistinct(tName, aName, distinct);
+			cout << tName << "." << aName << " distinct = " << distinct << endl;
+		}
+	}
 
 
-	////////////////////////////
-	// for (int i = 0; i < 1000; i++) {
-	// 	int r = rand() % tNo + 1;
-	// 	char tN[20]; sprintf(tN, "T_%d", r);
-	// 	string tName = tN;
-
-	// 	unsigned int tuples;
-	// 	catalog.GetNoTuples(tName, tuples);
-	// 	cout << tName << " tuples = " << tuples << endl;
-
-	// 	string path;
-	// 	catalog.GetDataFile(tName, path);
-	// 	cout << tName << " path = " << path << endl;
-
-	// 	vector<string> atts;
-	// 	catalog.GetAttributes(tName, atts);
-	// 	for (vector<string>::iterator it = atts.begin();
-	// 		 it != atts.end(); it++) {
-	// 		cout << *it << " ";
-	// 	}
-	// 	cout << endl;
-
-	// 	Schema schema;
-	// 	catalog.GetSchema(tName, schema);
-	// 	cout << schema << endl;
-
-	// 	////////////////////////////////
-	// 	for (int j = 0; j < 10; j++) {
-	// 		int s = rand() % (r * aNo) + 1;
-	// 		char aN[20]; sprintf(aN, "A_%d_%d", r, s);
-	// 		string aName = aN;
-
-	// 		unsigned int distinct;
-	// 		catalog.GetNoDistinct(tName, aName, distinct);
-	// 		cout << tName << "." << aName << " distinct = " << distinct << endl;
-	// 	}
-	// }
-
-
-	//////////////////////////////
+	//////////////////////////////DONE
 	for (int i = 0; i < 5; i++) {
 		char tN[20]; sprintf(tN, "T_%d", i);
 		string tName = tN;
