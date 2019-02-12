@@ -27,6 +27,7 @@ Catalog::Catalog(string& _fileName) {
     	//Making prepared statement
     	rc = sqlite3_prepare_v2( db, selAtt.c_str(), -1, &stmt, 0 );
     	//While the result of the sqlite is a tuple
+    	sqlite3_exec(db, "BEGIN", 0, 0, 0);
     	while ( (rc = sqlite3_step(stmt)) == SQLITE_ROW) {
     		//Store the values in some temporary variables                                              
 			string name = reinterpret_cast<const char*> (sqlite3_column_text(stmt,0)); 
@@ -53,7 +54,8 @@ Catalog::Catalog(string& _fileName) {
 			distincts.push_back(numDistinct);
 
 
-    	}	   	
+    	}
+    	sqlite3_exec(db, "COMMIT", 0, 0, 0);	   	
     	sqlite3_finalize(stmt);
     	//ERROR
     	if( rc != SQLITE_DONE ){
@@ -168,6 +170,7 @@ bool Catalog::Save() {
 		//Prepared Statement insert all table data
 		rc = sqlite3_prepare_v2( db, insAllT.c_str(), -1, &stmt, 0 );
 		//Going through every table
+		sqlite3_exec(db, "BEGIN", 0, 0, 0);
 		for(int i = 0; i < schemaN.size();i++){
 			//reset statements so we can reuse
 			sqlite3_reset(stmt);
@@ -181,15 +184,17 @@ bool Catalog::Save() {
 			rc = sqlite3_step(stmt);
 
 			if (rc != SQLITE_DONE) {
-				printf("ERROR inserting data: %s\n", sqlite3_errmsg(db));
+				printf("ERROR inserting tables data: %s\n", sqlite3_errmsg(db));
 			}
 
 
 		}
+		sqlite3_exec(db, "COMMIT", 0, 0, 0);
 		sqlite3_finalize(stmt); // Free statement
 		//Prepared statement insert all attribute data
 		rc = sqlite3_prepare_v2( db, insAllA.c_str(), -1, &stmt, 0 );
 		//For all tables
+		sqlite3_exec(db, "BEGIN", 0, 0, 0);
 		for(int i = 0; i < schemas.size();i++){
 			//Temporary variable to make it shorter
 			vector<Attribute> temp = schemas[i].GetAtts();
@@ -210,12 +215,13 @@ bool Catalog::Save() {
 				rc = sqlite3_bind_text( stmt, 4, schemaN[i].c_str(),schemaN[i].size(),SQLITE_STATIC);
 				rc = sqlite3_step(stmt);
 				if (rc != SQLITE_DONE) {
-					
-					printf("ERROR inserting data: %s\n", sqlite3_errmsg(db));
+					printf("%s, %s, %u, %s",temp[j].name.c_str(),typeT.c_str(),temp[j].noDistinct,schemaN[i].c_str());
+					printf("ERROR inserting attributes data: %s\n", sqlite3_errmsg(db));
 
 				}				   			
 			}
 		}
+		sqlite3_exec(db, "COMMIT", 0, 0, 0);
 		printf("Database content saved\n");
 		sqlite3_finalize(stmt);
 	}else{
