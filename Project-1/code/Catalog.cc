@@ -23,7 +23,7 @@ Catalog::Catalog(string& _fileName) {
    	} else {
     	fprintf(stderr, "Opened database successfully\n");
     	//SQL string to run pulls all data out of the database
-    	string selAtt = "SELECT a.name,a.type,a.numDistVal,a.tName,t.numTuples,t.fileLoc FROM attributes a,tables t WHERE a.tName = t.name";
+    	string selAtt = "SELECT a.name,a.type,a.numDistVal,a.tName,t.numTuples,t.fileLoc FROM attributes a,tables t WHERE a.tName = t.name ORDER BY t.tOrd ,a.aOrd";
     	//Making prepared statement
     	rc = sqlite3_prepare_v2( db, selAtt.c_str(), -1, &stmt, 0 );
     	//While the result of the sqlite is a tuple
@@ -43,7 +43,6 @@ Catalog::Catalog(string& _fileName) {
 				schemaT.push_back(sqlite3_column_int(stmt,4));
 				schemaL.push_back(reinterpret_cast<const char*> (sqlite3_column_text(stmt,5)));
 				
-
 			}
 
 			//cout << name << " " << type << " " << numDistinct << endl;
@@ -148,8 +147,8 @@ bool Catalog::Save() {
 		//SQL strings
 		string delAllT = "DELETE FROM tables";
 		string delAllA = "DELETE FROM attributes";
-		string insAllT = "INSERT INTO tables VALUES(?1,?2,?3)";
-		string insAllA = "INSERT INTO attributes VALUES(?1,?2,?3,?4)";
+		string insAllT = "INSERT INTO tables VALUES(?1,?2,?3,?4)";
+		string insAllA = "INSERT INTO attributes VALUES(?1,?2,?3,?4,?5)";
 		//Simple execute for deletes
 		rc = sqlite3_exec(db, delAllT.c_str(), 0, 0, &zErrMsg);
 		if( rc != SQLITE_OK ){
@@ -167,6 +166,7 @@ bool Catalog::Save() {
 	     	//fprintf(stdout, "attributes emptied successfully\n");
 
 	    }
+	    int tCount = 0;
 		//Prepared Statement insert all table data
 		rc = sqlite3_prepare_v2( db, insAllT.c_str(), -1, &stmt, 0 );
 		//Going through every table
@@ -181,6 +181,8 @@ bool Catalog::Save() {
 
 			rc = sqlite3_bind_text( stmt, 3, schemaL[i].c_str(),schemaL[i].size(), SQLITE_STATIC);
 
+			rc = sqlite3_bind_int( stmt, 4, tCount);
+			tCount++;
 			rc = sqlite3_step(stmt);
 
 			if (rc != SQLITE_DONE) {
@@ -191,6 +193,7 @@ bool Catalog::Save() {
 		}
 		sqlite3_exec(db, "COMMIT", 0, 0, 0);
 		sqlite3_finalize(stmt); // Free statement
+		int aCount = 0;
 		//Prepared statement insert all attribute data
 		rc = sqlite3_prepare_v2( db, insAllA.c_str(), -1, &stmt, 0 );
 		//For all tables
@@ -213,6 +216,8 @@ bool Catalog::Save() {
 
 				rc = sqlite3_bind_int( stmt, 3, temp[j].noDistinct);
 				rc = sqlite3_bind_text( stmt, 4, schemaN[i].c_str(),schemaN[i].size(),SQLITE_STATIC);
+				rc = sqlite3_bind_int( stmt, 5, aCount);
+				aCount++;
 				rc = sqlite3_step(stmt);
 				if (rc != SQLITE_DONE) {
 					printf("%s, %s, %u, %s",temp[j].name.c_str(),typeT.c_str(),temp[j].noDistinct,schemaN[i].c_str());
@@ -345,13 +350,7 @@ bool Catalog::GetSchema(string& _table, Schema& _schema) {
 
 bool Catalog::CreateTable(string& _table, vector<string>& _attributes,
 	vector<string>& _attributeTypes) {
-
-	for(int i = 0; i < schemaN.size();i++){
-		if(schemaN[i] == _table){
-			printf("Table with same name %s\n",_table.c_str());
-			return false;
-		}
-	}
+	
 	if(_attributes.size() == 0){
 		printf("0 Attributes given\n");
 		return false;
@@ -359,6 +358,12 @@ bool Catalog::CreateTable(string& _table, vector<string>& _attributes,
 	if(_attributeTypes.size()!= _attributes.size()){
 		printf("Number of types don't match the number of attributes\n");
 		return false;
+	}
+	for(int i = 0; i < schemaN.size();i++){
+		if(schemaN[i] == _table){
+			printf("Table with same name %s\n",_table.c_str());
+			return false;
+		}
 	}
 	for(int i = 0; i < _attributes.size();i++){
 		for(int j = 0; j < _attributes.size();j++){

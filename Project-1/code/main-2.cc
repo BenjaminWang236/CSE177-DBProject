@@ -84,7 +84,6 @@ int main (int argc, char* argv[]) {
 	}
 	cout << endl;
 
-
 	////////////////////////Outputs Garbage?
 	for (int i = 0; i < 1000; i++) {
 		int r = rand() % tNo + 1;
