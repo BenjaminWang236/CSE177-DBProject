@@ -461,6 +461,7 @@ int CNF::ExtractCNF (AndList& parseTree, Schema& schema, Record& literal) {
 			recSize += cLen;
 			recPos += cLen;
 			numFieldsInLiteral += 1;
+			//cout << "Left String "<<currCond->left->Left->code << endl;
 		}
 		else if (currCond->left->left->code == INTEGER) {
 			// see if it is an integer
@@ -521,7 +522,12 @@ int CNF::ExtractCNF (AndList& parseTree, Schema& schema, Record& literal) {
 			// add to record literal
 			attStart[numFieldsInLiteral] = recSize;
 			int cLen = strlen(currCond->left->right->value);
+			//Changed cLen to account for null char
+			cLen++;
 			memcpy(recPos, currCond->left->right->value, cLen);
+			//Made sure to add in null char
+			recPos[cLen] = '\0';
+			//cout << "Right String "<<currCond->left->right->value << endl;
 
 			if (cLen % sizeof (int) != 0) {
 				cLen += sizeof (int) - (cLen % sizeof (int));
@@ -535,7 +541,7 @@ int CNF::ExtractCNF (AndList& parseTree, Schema& schema, Record& literal) {
 			andList[numAnds].operand2 = Literal;
 			andList[numAnds].whichAtt2 = numFieldsInLiteral;
 			typeRight = Integer;
-
+			//cout << "Right Int "<< currCond->left->right->value << endl;
 			// add to record literal
 			attStart[numFieldsInLiteral] = recSize;
 			int cLen = sizeof(int);
@@ -549,11 +555,12 @@ int CNF::ExtractCNF (AndList& parseTree, Schema& schema, Record& literal) {
 			andList[numAnds].operand2 = Literal;
 			andList[numAnds].whichAtt2 = numFieldsInLiteral;
 			typeRight = Float;
-
+			//cout << "Right FLOAT "<< currCond->left->right->value << endl;
 			// add to record literal
 			attStart[numFieldsInLiteral] = recSize;
 			int cLen = sizeof(double);
-			*((double *) recPos) = atof (currCond->left->left->value);
+			//Changed to left->right from left->left
+			*((double *) recPos) = atof (currCond->left->right->value);
 			recSize += cLen;
 			recPos += cLen;
 			numFieldsInLiteral += 1;
@@ -567,9 +574,16 @@ int CNF::ExtractCNF (AndList& parseTree, Schema& schema, Record& literal) {
 
 		// now we check to make sure that there was not a type mismatch
 		if (typeLeft != typeRight) {
-			cerr << "ERROR: Type mismatch for " << currCond->left->left->value
-				<< " AND "	<< currCond->left->right->value << "!" << endl;
-			return -1;
+			// if(typeLeft == Float && typeRight == Integer){
+
+			// }else{
+			// cerr << "ERROR: Type mismatch for " << currCond->left->left->value << " AND "	<< currCond->left->right->value << "!" << endl;
+			// 	return -1;
+			// }
+			//cerr<< currCond->left->left->code << " AND " << currCond->left->right->code << endl;
+			cerr << "ERROR: Type mismatch for " << currCond->left->left->value << " AND "	<< currCond->left->right->value << "!" << endl;
+				return -1;
+			
 		}
 
 		// set up the type info for this comparison
@@ -673,7 +687,7 @@ int CNF::ExtractCNF (AndList& parseTree, Schema& leftSchema, Schema& rightSchema
 		numAnds += 1;
 		currCond = currCond->rightAnd;
 	}
-
+	//cout << "SUCCESS" << endl;
 	return 0;
 }
 

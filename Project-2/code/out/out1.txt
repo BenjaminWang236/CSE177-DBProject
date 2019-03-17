@@ -1,0 +1,18 @@
+Data copied successfully
+OK!
+QUERY EXECUTION TREE 
+--WRITE OUT [{sum(ps_supplycost), s_suppkey}]
+	--GROUP BY[ schemaIn: {ps_availqty, ps_comment, ps_partkey, ps_suppkey, ps_supplycost, p_brand, p_comment, p_container, p_mfgr, p_name, p_partkey, p_retailprice, p_size, p_type, s_acctbal, s_address, s_comment, s_name, s_nationkey, s_phone, s_suppkey},schemaOut: {sum(ps_supplycost), s_suppkey}]
+	
+	--JOIN[ schemaLeft: {ps_availqty, ps_comment, ps_partkey, ps_suppkey, ps_supplycost, p_brand, p_comment, p_container, p_mfgr, p_name, p_partkey, p_retailprice, p_size, p_type},
+		schemaRight: {s_acctbal, s_address, s_comment, s_name, s_nationkey, s_phone, s_suppkey},
+		schemaOut: {ps_availqty, ps_comment, ps_partkey, ps_suppkey, ps_supplycost, p_brand, p_comment, p_container, p_mfgr, p_name, p_partkey, p_retailprice, p_size, p_type, s_acctbal, s_address, s_comment, s_name, s_nationkey, s_phone, s_suppkey}]
+		--SELECT[ Schema:{s_acctbal, s_address, s_comment, s_name, s_nationkey, s_phone, s_suppkey}; Predicate (s_acctbal > 0 )]
+		--JOIN[ schemaLeft: {ps_availqty, ps_comment, ps_partkey, ps_suppkey, ps_supplycost},
+			schemaRight: {p_brand, p_comment, p_container, p_mfgr, p_name, p_partkey, p_retailprice, p_size, p_type},
+			schemaOut: {ps_availqty, ps_comment, ps_partkey, ps_suppkey, ps_supplycost, p_brand, p_comment, p_container, p_mfgr, p_name, p_partkey, p_retailprice, p_size, p_type}]
+			--SCAN[part]
+			--SCAN[partsupp]
+
+Database content saved
+Database closed successfully

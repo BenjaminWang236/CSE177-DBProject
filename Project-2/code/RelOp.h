@@ -121,6 +121,8 @@ private:
 	RelationalOp* left;
 	RelationalOp* right;
 
+
+
 public:
 	Join(Schema& _schemaLeft, Schema& _schemaRight, Schema& _schemaOut,
 		CNF& _predicate, RelationalOp* _left, RelationalOp* _right);
@@ -129,6 +131,8 @@ public:
 	virtual bool GetNext(Record& _record) {}
 
 	virtual ostream& print(ostream& _os);
+	int push;
+	unsigned long int size;
 };
 
 class DuplicateRemoval : public RelationalOp {

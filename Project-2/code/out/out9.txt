@@ -1,0 +1,18 @@
+Data copied successfully
+OK!
+QUERY EXECUTION TREE 
+--WRITE OUT [{sum(l_discount˜)}]
+	--SUM:[ schemaIn: {o_clerk, o_comment, o_custkey, o_orderdate, o_orderkey, o_orderstatus, o_priority, o_shippriority, o_totalprice, c_acctbal, c_address, c_comment, c_custkey, c_mktsegment, c_name, c_nationkey, c_phone, l_comment, l_commitdate, l_discount, l_extendedprice, l_linenumber, l_linestatus, l_orderkey, l_partkey, l_quantity, l_receiptdate, l_returnflag, l_shipdate, l_shipinstruct, l_shipmode, l_suppkey, l_tax},schemaOut: {sum(l_discount˜)}]
+	
+	--JOIN[ schemaLeft: {o_clerk, o_comment, o_custkey, o_orderdate, o_orderkey, o_orderstatus, o_priority, o_shippriority, o_totalprice, c_acctbal, c_address, c_comment, c_custkey, c_mktsegment, c_name, c_nationkey, c_phone},
+		schemaRight: {l_comment, l_commitdate, l_discount, l_extendedprice, l_linenumber, l_linestatus, l_orderkey, l_partkey, l_quantity, l_receiptdate, l_returnflag, l_shipdate, l_shipinstruct, l_shipmode, l_suppkey, l_tax},
+		schemaOut: {o_clerk, o_comment, o_custkey, o_orderdate, o_orderkey, o_orderstatus, o_priority, o_shippriority, o_totalprice, c_acctbal, c_address, c_comment, c_custkey, c_mktsegment, c_name, c_nationkey, c_phone, l_comment, l_commitdate, l_discount, l_extendedprice, l_linenumber, l_linestatus, l_orderkey, l_partkey, l_quantity, l_receiptdate, l_returnflag, l_shipdate, l_shipinstruct, l_shipmode, l_suppkey, l_tax}]
+		--SELECT[ Schema:{l_comment, l_commitdate, l_discount, l_extendedprice, l_linenumber, l_linestatus, l_orderkey, l_partkey, l_quantity, l_receiptdate, l_returnflag, l_shipdate, l_shipinstruct, l_shipmode, l_suppkey, l_tax}; Predicate (l_quantity > 30l_quantity > 0 )]
+		--JOIN[ schemaLeft: {o_clerk, o_comment, o_custkey, o_orderdate, o_orderkey, o_orderstatus, o_priority, o_shippriority, o_totalprice},
+			schemaRight: {c_acctbal, c_address, c_comment, c_custkey, c_mktsegment, c_name, c_nationkey, c_phone},
+			schemaOut: {o_clerk, o_comment, o_custkey, o_orderdate, o_orderkey, o_orderstatus, o_priority, o_shippriority, o_totalprice, c_acctbal, c_address, c_comment, c_custkey, c_mktsegment, c_name, c_nationkey, c_phone}]
+			--SELECT[ Schema:{c_acctbal, c_address, c_comment, c_custkey, c_mktsegment, c_name, c_nationkey, c_phone}; Predicate (c_name = Customer#000070919 )]
+			--SCAN[orders]
+
+Database content saved
+Database closed successfully

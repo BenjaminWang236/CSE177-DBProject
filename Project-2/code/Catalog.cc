@@ -21,6 +21,7 @@ Catalog::Catalog(string& _fileName) {
 	if( rc ) {
     	fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
    	} else {
+
     	fprintf(stderr, "Opened database successfully\n");
     	//SQL string to run pulls all data out of the database
     	string selAtt = "SELECT a.name,a.type,a.numDistVal,a.tName,t.numTuples,t.fileLoc FROM attributes a,tables t WHERE a.tName = t.name ORDER BY t.tOrd ,a.aOrd";
@@ -262,13 +263,15 @@ void Catalog::SetNoTuples(string& _table, unsigned int& _noTuples) {
 
 bool Catalog::GetDataFile(string& _table, string& _path) {
 	//Obvious linear search
+	//cout << schemaN.size() << endl;
 	for(int i = 0; i < schemaN.size();i++){
+		//cout << schemaN[i] << endl;
 		if(schemaN[i] == _table){
 			_path = schemaL[i];
 			return true;
 		}
 	}
-	printf("Table %s does not exist, using garbage data\n",_table.c_str());
+	printf("Table %s does not exist, using garbage datafile\n",_table.c_str());
 	return false;
 }
 
@@ -341,6 +344,11 @@ bool Catalog::GetSchema(string& _table, Schema& _schema) {
 	for(int i = 0; i < schemaN.size();i++){
 		if(schemaN[i] == _table){
 			_schema = schemas[i];
+			// cout << "------------" << schemaN[i] << "------------"<< endl;
+			// for(int j = 0; j < _schema.GetAtts().size();j++){
+			// 	cout << _schema.GetAtts()[j].name << endl;
+			// }
+			// cout << "------------------------------------"<< endl;
 			return true;
 		}
 	}

@@ -516,7 +516,7 @@ char *yytext;
 /* The code in %{ %} is included as it is in lex.yy.c.
  * It has C global variables, prototypes, and comments. 
  */
-#line 10 "QueryLexer.l"
+#line 12 "QueryLexer.l"
 
 #include <string.h> // for strdup()
 #include <stdlib.h> // for malloc()
@@ -756,7 +756,7 @@ YY_DECL
 		}
 
 	{
-#line 36 "QueryLexer.l"
+#line 38 "QueryLexer.l"
 
 
 #line 763 "QueryLexer.c"
@@ -824,97 +824,97 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 38 "QueryLexer.l"
+#line 40 "QueryLexer.l"
 return(SELECT);
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 40 "QueryLexer.l"
+#line 42 "QueryLexer.l"
 return(FROM);
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 42 "QueryLexer.l"
+#line 44 "QueryLexer.l"
 return(WHERE);
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 44 "QueryLexer.l"
+#line 46 "QueryLexer.l"
 return(SUM);
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 46 "QueryLexer.l"
+#line 48 "QueryLexer.l"
 return(AND);
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 48 "QueryLexer.l"
+#line 50 "QueryLexer.l"
 return(GROUP);
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 50 "QueryLexer.l"
+#line 52 "QueryLexer.l"
 return(DISTINCT);
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 52 "QueryLexer.l"
+#line 54 "QueryLexer.l"
 return(BY);
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 54 "QueryLexer.l"
+#line 56 "QueryLexer.l"
 return('(');
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 56 "QueryLexer.l"
+#line 58 "QueryLexer.l"
 return('<');
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 58 "QueryLexer.l"
+#line 60 "QueryLexer.l"
 return('>');
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 60 "QueryLexer.l"
+#line 62 "QueryLexer.l"
 return('=');
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 62 "QueryLexer.l"
+#line 64 "QueryLexer.l"
 return(')');
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 64 "QueryLexer.l"
+#line 66 "QueryLexer.l"
 return('+');
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 66 "QueryLexer.l"
+#line 68 "QueryLexer.l"
 return('-');
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 68 "QueryLexer.l"
+#line 70 "QueryLexer.l"
 return('/');
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 70 "QueryLexer.l"
+#line 72 "QueryLexer.l"
 return('*');
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 72 "QueryLexer.l"
+#line 74 "QueryLexer.l"
 return(',');
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 74 "QueryLexer.l"
+#line 76 "QueryLexer.l"
 {
 	yylval.actualChars = strdup(yytext);
   	return(YY_INTEGER); 
@@ -922,7 +922,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 79 "QueryLexer.l"
+#line 81 "QueryLexer.l"
 {
 	yylval.actualChars = strdup(yytext); 
   	return(YY_FLOAT);
@@ -930,7 +930,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 84 "QueryLexer.l"
+#line 86 "QueryLexer.l"
 {
 	yylval.actualChars = strdup(yytext);
   	return(YY_NAME);
@@ -938,7 +938,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 89 "QueryLexer.l"
+#line 91 "QueryLexer.l"
 {
 	/* take care of ' in a string */
 	if (yytext[yyleng-2] == '\\') yymore();
@@ -952,22 +952,22 @@ YY_RULE_SETUP
 case 23:
 /* rule 23 can match eol */
 YY_RULE_SETUP
-#line 99 "QueryLexer.l"
+#line 101 "QueryLexer.l"
 lineno++;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 101 "QueryLexer.l"
+#line 103 "QueryLexer.l"
 ;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 103 "QueryLexer.l"
+#line 105 "QueryLexer.l"
 yyerror("LEX_ERROR: invalid character");
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 105 "QueryLexer.l"
+#line 107 "QueryLexer.l"
 ECHO;
 	YY_BREAK
 #line 974 "QueryLexer.c"
@@ -1971,7 +1971,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 105 "QueryLexer.l"
+#line 107 "QueryLexer.l"
 
 
 
@@ -1982,4 +1982,3 @@ void yyerror(char *s) {
 int yywrap(void) {
   return 1;
 }
-

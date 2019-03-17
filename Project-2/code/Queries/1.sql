@@ -1,5 +1,4 @@
-SELECT SUM(ps_supplycost), suppkey 
+SELECT SUM(ps_supplycost), s_suppkey 
 FROM part, supplier, partsupp 
-WHERE p_partkey = ps_partkey AND s_suppkey = ps_suppkey AND s_acctbal > 2500
+WHERE p_partkey = ps_partkey AND s_suppkey = ps_suppkey AND s_acctbal > 2500.0
 GROUP BY s_suppkey
-

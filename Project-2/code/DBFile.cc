@@ -8,7 +8,7 @@
 
 using namespace std;
 
-
+//Looked at COP6726 A1.pdf for details on how functions are used
 DBFile::DBFile () : fileName("") {
 }
 
@@ -32,6 +32,9 @@ int DBFile::Create (char* f_path, FileType f_type) {
 }
 
 int DBFile::Open (char* f_path) {
+	fileName = f_path;
+	//cout << fileName << endl;
+
 }
 
 void DBFile::Load (Schema& schema, char* textFile) {
@@ -47,4 +50,8 @@ void DBFile::AppendRecord (Record& rec) {
 }
 
 int DBFile::GetNext (Record& rec) {
+}
+
+string DBFile::GetFile (){
+	return fileName;
 }
