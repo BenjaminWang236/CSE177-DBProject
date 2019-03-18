@@ -35,6 +35,20 @@ Select::~Select() {
 	printf("Deconstructor Select\n");
 }
 
+bool Select::GetNext(Record& _record){
+	while(true){
+		bool ret = producer->GetNext(_record);
+		if(!ret){
+			return false;
+		}else{
+			ret = predicate.Run(_record,constants);
+			if(ret){
+				return true;
+			}
+		}
+	}
+}
+
 ostream& Select::print(ostream& _os) {
 	_os << "SELECT[ Schema:{";
 	vector<Attribute> a = schema.GetAtts();
@@ -291,6 +305,10 @@ WriteOut::WriteOut(Schema& _schema, string& _outFile, RelationalOp* _producer) {
 
 WriteOut::~WriteOut() {
 	printf("Deconstructor WriteOut\n");
+}
+
+bool GetNext(Record& _record) {
+	
 }
 
 ostream& WriteOut::print(ostream& _os) {

@@ -49,7 +49,7 @@ public:
 	Scan(Schema& _schema, DBFile& _file);
 	virtual ~Scan();
 
-	virtual bool GetNext(Record& _record) {}
+	virtual bool GetNext(Record& _record){}
 
 	virtual ostream& print(ostream& _os);
 };
@@ -72,7 +72,7 @@ public:
 		RelationalOp* _producer);
 	virtual ~Select();
 
-	virtual bool GetNext(Record& _record) {}
+	virtual bool GetNext(Record& _record);
 
 	virtual ostream& print(ostream& _os);
 };
@@ -215,7 +215,7 @@ public:
 	WriteOut(Schema& _schema, string& _outFile, RelationalOp* _producer);
 	virtual ~WriteOut();
 
-	virtual bool GetNext(Record& _record) {}
+	virtual bool GetNext(Record& _record);
 
 	virtual ostream& print(ostream& _os);
 };

@@ -15,6 +15,8 @@ class DBFile {
 private:
 	File file;
 	string fileName;
+	int currPage;
+	Page page;
 
 public:
 	DBFile ();
