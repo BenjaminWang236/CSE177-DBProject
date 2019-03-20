@@ -135,6 +135,20 @@ Project::~Project() {
 	printf("Deconstructor Project\n");
 }
 
+bool Project::GetNext(Record& _record)
+{
+	bool ret = producer->GetNext(_record);
+	if (ret)
+	{
+		outfile << _record.Project(keepMe,numAttsOutput,numAttsInput);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 ostream& Project::print(ostream& _os) {
 	_os << "PROJECT[ schemaIn: {";
 	for(int i = 0; i < schemaIn.GetAtts().size();i++){
@@ -307,8 +321,17 @@ WriteOut::~WriteOut() {
 	printf("Deconstructor WriteOut\n");
 }
 
-bool GetNext(Record& _record) {
-	
+bool WriteOut::GetNext(Record& _record) {
+	bool ret = producer->GetNext(_record);
+	if (ret)
+	{
+		outfile << _record.print(schema);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 ostream& WriteOut::print(ostream& _os) {
