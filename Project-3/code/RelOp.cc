@@ -13,9 +13,17 @@ Scan::Scan(Schema& _schema, DBFile& _file) {
 	schema = _schema;
 	file = _file;
 }
-
+bool Scan::GetNext(Record& _record){
+	if(file.GetNext(_record)==0){
+		//if there is a record, return
+		return true;
+	}else{
+		//no records
+ 		return false;
+	}
+}
 Scan::~Scan() {
-	printf("Deconstructor Scan\n");
+	//printf("Deconstructor Scan\n");
 }
 
 ostream& Scan::print(ostream& _os) {
@@ -32,17 +40,23 @@ Select::Select(Schema& _schema, CNF& _predicate, Record& _constants,
 }
 
 Select::~Select() {
-	printf("Deconstructor Select\n");
+	//printf("Deconstructor Select\n");
 }
 
 bool Select::GetNext(Record& _record){
+	//While there are still records from the producer
 	while(true){
+		//Get the records
 		bool ret = producer->GetNext(_record);
 		if(!ret){
+			//No more records
 			return false;
 		}else{
+			//If there are records
+			//compare the record to the constants gotten from the predicates
 			ret = predicate.Run(_record,constants);
 			if(ret){
+				//Success, found a matching tuple
 				return true;
 			}
 		}
@@ -132,19 +146,23 @@ Project::Project(Schema& _schemaIn, Schema& _schemaOut, int _numAttsInput,
 }
 
 Project::~Project() {
-	printf("Deconstructor Project\n");
+	//printf("Deconstructor Project\n");
 }
 
 bool Project::GetNext(Record& _record)
 {
+	//Get the produces record
 	bool ret = producer->GetNext(_record);
 	if (ret)
 	{
-		outfile << _record.Project(keepMe,numAttsOutput,numAttsInput);
+		//Success project the schema
+		_record.Project(keepMe,numAttsOutput,numAttsInput);
 		return true;
 	}
 	else
 	{
+		//Nothing left to project
+		//cout << "false project" << endl;
 		return false;
 	}
 }
@@ -181,7 +199,7 @@ Join::Join(Schema& _schemaLeft, Schema& _schemaRight, Schema& _schemaOut,
 }
 
 Join::~Join() {
-	printf("Deconstructor Join\n");
+	//printf("Deconstructor Join\n");
 }
 
 ostream& Join::print(ostream& _os) {
@@ -232,7 +250,7 @@ DuplicateRemoval::DuplicateRemoval(Schema& _schema, RelationalOp* _producer) {
 }
 
 DuplicateRemoval::~DuplicateRemoval() {
-	printf("Deconstructor DuplicateRemoval\n");
+	//printf("Deconstructor DuplicateRemoval\n");
 }
 
 ostream& DuplicateRemoval::print(ostream& _os) {
@@ -256,7 +274,7 @@ Sum::Sum(Schema& _schemaIn, Schema& _schemaOut, Function& _compute,
 }
 
 Sum::~Sum() {
-	printf("Deconstructor Sum\n");
+	//printf("Deconstructor Sum\n");
 }
 
 ostream& Sum::print(ostream& _os) {
@@ -288,7 +306,7 @@ GroupBy::GroupBy(Schema& _schemaIn, Schema& _schemaOut, OrderMaker& _groupingAtt
 }
 
 GroupBy::~GroupBy() {
-	printf("Deconstructor GroupBy\n");
+	//printf("Deconstructor GroupBy\n");
 }
 
 ostream& GroupBy::print(ostream& _os) {
@@ -315,21 +333,37 @@ WriteOut::WriteOut(Schema& _schema, string& _outFile, RelationalOp* _producer) {
 	schema = _schema;
 	outFile = _outFile;
 	producer = _producer;
+	outFile = _outFile;
+	//Open the file stream
+	out.open(outFile.c_str());
+
 }
 
 WriteOut::~WriteOut() {
-	printf("Deconstructor WriteOut\n");
+	//printf("Deconstructor WriteOut\n");
+	//if filestream is open, close it
+	if(out.is_open()){
+		out.close();
+	}
 }
 
 bool WriteOut::GetNext(Record& _record) {
+	//Get record from producer
 	bool ret = producer->GetNext(_record);
 	if (ret)
-	{
-		outfile << _record.print(schema);
+	{	
+		//Write to the outfile all the records matching the schema
+		_record.print(out,schema);
+		out << endl;
+		//For demo only, need to comment out all other cout statments
+		// _record.print(cout,schema);
+		// cout << endl;
 		return true;
 	}
 	else
-	{
+	{		
+		//Close the file stream
+		out.close();
 		return false;
 	}
 }
@@ -350,4 +384,10 @@ ostream& WriteOut::print(ostream& _os) {
 ostream& operator<<(ostream& _os, QueryExecutionTree& _op) {
 	_os << "QUERY EXECUTION TREE " <<endl; 
 	return _os << "--"<<*_op.root;
+}
+
+void QueryExecutionTree::ExecuteQuery(){
+		Record rec;
+		while(root->GetNext(rec)){
+		}
 }

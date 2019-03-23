@@ -85,7 +85,8 @@ void Page :: FromBinary (char* bits) {
 
 	// first, empty out the list of current records
 	TwoWayList<Record> aux; aux.Swap(myRecs);
-
+	//cout << "FromBinary" << endl;
+	//cout << numRecs << endl;
 	// now loop through and re-populate it
 	Record temp;
 	curSizeInBytes = sizeof (int);
@@ -93,7 +94,6 @@ void Page :: FromBinary (char* bits) {
 		// get the length of the current record
 		int len = ((int *) curPos)[0];
 		curSizeInBytes += len;
-
 		// create the record
 		temp.CopyBits(curPos, len);
 
@@ -145,6 +145,7 @@ int File :: Open (int fileLen, char* fName) {
 		// read in the first few bits, which is the number of pages
 		lseek (fileDescriptor, 0, SEEK_SET);
 		read (fileDescriptor, &curLength, sizeof (off_t));
+		//cout << curLength << endl;
 	}
 	else curLength = 0;
 
@@ -172,33 +173,38 @@ int File :: GetPage (Page& putItHere, off_t whichPage) {
 
 	// this is because the first page has no data
 	whichPage++;
-
 	// read in the specified page
 	char* bits = new char[PAGE_SIZE];
-	
 	lseek (fileDescriptor, PAGE_SIZE * whichPage, SEEK_SET);
 	read (fileDescriptor, bits, PAGE_SIZE);
+	//cout << bits << endl;	
 	putItHere.FromBinary(bits);
 
 	delete [] bits;
 }
 
 void File :: AddPage (Page& addMe, off_t whichPage) {
-	// do the zeroing
-	for (off_t i = curLength; i < whichPage; i++) {
-		char zero[PAGE_SIZE]; bzero(zero, PAGE_SIZE);
-		lseek (fileDescriptor, PAGE_SIZE * (i+1), SEEK_SET);
-		write (fileDescriptor, &zero, PAGE_SIZE);
+	//If statment taken from COP-6726
+	if(whichPage >= curLength){
+		// do the zeroing
+		for (off_t i = curLength; i < whichPage; i++) {
+			char zero[PAGE_SIZE]; bzero(zero, PAGE_SIZE);
+			lseek (fileDescriptor, PAGE_SIZE * (i+1), SEEK_SET);
+			write (fileDescriptor, &zero, PAGE_SIZE);
+		}
+
+		// now write the page
+		char* bits = new char[PAGE_SIZE];
+
+		addMe.ToBinary(bits);
+		lseek (fileDescriptor, PAGE_SIZE * (whichPage+1), SEEK_SET);
+		write (fileDescriptor, bits, PAGE_SIZE);
+		
+		//Also taken since its weird that we don't increase the length when adding pages
+		curLength = whichPage+1;
+		
+		delete [] bits;
 	}
-
-	// now write the page
-	char* bits = new char[PAGE_SIZE];
-
-	addMe.ToBinary(bits);
-	lseek (fileDescriptor, PAGE_SIZE * (whichPage+1), SEEK_SET);
-	write (fileDescriptor, bits, PAGE_SIZE);
-
-	delete [] bits;
 }
 
 off_t File :: GetLength () {

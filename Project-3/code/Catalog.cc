@@ -22,7 +22,7 @@ Catalog::Catalog(string& _fileName) {
     	fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
    	} else {
 
-    	fprintf(stderr, "Opened database successfully\n");
+    	//fprintf(stderr, "Opened database successfully\n");
     	//SQL string to run pulls all data out of the database
     	string selAtt = "SELECT a.name,a.type,a.numDistVal,a.tName,t.numTuples,t.fileLoc FROM attributes a,tables t WHERE a.tName = t.name ORDER BY t.tOrd ,a.aOrd";
     	//Making prepared statement
@@ -89,7 +89,7 @@ Catalog::Catalog(string& _fileName) {
 	   				schemas.push_back(Schema(aN,aT,aD));
 	   			}
 	   		}
-	     	printf("Data copied successfully\n");
+	     	//printf("Data copied successfully\n");
 	     	error = false;
 	     	//print();
 
@@ -134,7 +134,7 @@ Catalog::~Catalog() {
 	//Close database
 	rc = sqlite3_close_v2(db);
 	if(rc == SQLITE_OK){
-		printf("Database closed successfully\n");
+		//printf("Database closed successfully\n");
 	}else{
 		printf("Database failed to close\n");
 	}
@@ -228,7 +228,7 @@ bool Catalog::Save() {
 			}
 		}
 		sqlite3_exec(db, "COMMIT", 0, 0, 0);
-		printf("Database content saved\n");
+		//printf("Database content saved\n");
 		sqlite3_finalize(stmt);
 	}else{
 		printf("Did not save due to initial data copy error");

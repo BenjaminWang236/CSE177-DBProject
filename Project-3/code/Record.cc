@@ -65,19 +65,25 @@ int Record :: ExtractNextRecord (Schema& mySchema, FILE& textFile) {
 	// this is the current position (int bytes) in the binary
 	// representation of the record that we are dealing with
 	int currentPosInRec = sizeof (int) * (n + 1);
-
+	//cout << n <<endl;
 	// loop through all of the attributes
 	for (int i = 0; i < n; i++) {
 		// first we suck in the next attribute value
 		int len = 0;
-		while (1) {
-			int nextChar = getc (&textFile);
 
-			if (nextChar == '|') break;
+		while (1) {
+			//cout << "did i get here?" <<endl;
+			int nextChar = getc (&textFile);
+			if (nextChar == '|') {
+				//cout << "|" << endl;
+				break;
+			}
 			else if (nextChar == EOF) {
 				delete [] space;
 				delete [] recSpace;
 				return 0;
+			}else{
+				//cout << nextChar;
 			}
 
 			space[len] = nextChar;
@@ -430,6 +436,7 @@ ostream& Record :: print(ostream& _os, Schema& mySchema) {
 			_os << ", ";
 		}
 	}
-
+	//why no end bracket?
+	_os << "}";
 	return _os;
 }

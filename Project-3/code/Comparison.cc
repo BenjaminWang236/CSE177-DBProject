@@ -46,7 +46,7 @@ bool Comparison :: Run (Record& left, Record& right) {
 
 	char* left_bits = left.GetBits();
 	char* lit_bits = right.GetBits();
-
+	//cout<< left_bits << endl;
 	// first get a pointer to the first value to compare
 	if (operand1 == Left) val1 = left_bits + ((int *) left_bits)[whichAtt1 + 1];
 	else val1 = lit_bits + ((int *) lit_bits)[whichAtt1 + 1];
@@ -64,7 +64,7 @@ bool Comparison :: Run (Record& left, Record& right) {
 		case Integer: {
 			val1Int = *((int *) val1);
 			val2Int = *((int *) val2);
-
+			//cout << "Integer "<<val1Int << " "<< val2Int << endl;
 			// and check the operation type in order to actually do the comparison
 			switch (op) {
 				case LessThan: return (val1Int < val2Int);
@@ -76,7 +76,7 @@ bool Comparison :: Run (Record& left, Record& right) {
 		case Float: {
 			val1Double = *((double *) val1);
 			val2Double = *((double *) val2);
-
+			//cout << "Double "<<val1Double << " "<< val2Double << endl;
 			// and check the operation type in order to actually do the comparison
 			switch (op) {
 				case LessThan: return (val1Double < val2Double);

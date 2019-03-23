@@ -50,7 +50,7 @@ int main () {
 
 			int parse = -1;
 			if (yyparse () == 0) {
-				cout << "OK!" << endl;
+				//cout << "OK!" << endl;
 				parse = 0;
 			}
 			else {
@@ -71,6 +71,8 @@ int main () {
 					groupingAtts, distinctAtts, queryTree);
 
 				cout << queryTree << endl;
+
+				queryTree.ExecuteQuery();
 			}	
 	// 	}else{
 	// 		on = false;

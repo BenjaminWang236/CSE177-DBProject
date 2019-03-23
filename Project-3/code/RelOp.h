@@ -8,6 +8,7 @@
 #include "DBFile.h"
 #include "Function.h"
 #include "Comparison.h"
+#include <fstream>
 
 using namespace std;
 
@@ -49,7 +50,7 @@ public:
 	Scan(Schema& _schema, DBFile& _file);
 	virtual ~Scan();
 
-	virtual bool GetNext(Record& _record){}
+	virtual bool GetNext(Record& _record);
 
 	virtual ostream& print(ostream& _os);
 };
@@ -211,6 +212,8 @@ private:
 	// operator generating data
 	RelationalOp* producer;
 
+	ofstream out;
+
 public:
 	WriteOut(Schema& _schema, string& _outFile, RelationalOp* _producer);
 	virtual ~WriteOut();
@@ -229,7 +232,7 @@ public:
 	QueryExecutionTree() {}
 	virtual ~QueryExecutionTree() {}
 
-	void ExecuteQuery() {}
+	void ExecuteQuery();
 	void SetRoot(RelationalOp& _root) {root = &_root;}
 
     friend ostream& operator<<(ostream& _os, QueryExecutionTree& _op);

@@ -52,10 +52,10 @@ void QueryOptimizer::Optimize(TableList* _tables, AndList* _predicate,
 		temp = temp->next;						
 
 	}
-	cout << "Check point 1, tvec values"<< endl;
-	for(int i = 0; i < tvec.size();i++){
-		cout << tvec[i]->tables[0] << " " << tvec[i]->size << endl;
-	}
+	// cout << "Check point 1, tvec values"<< endl;
+	// for(int i = 0; i < tvec.size();i++){
+	// 	cout << tvec[i]->tables[0] << " " << tvec[i]->size << endl;
+	// }
 	//Prep the tree by finding the first 'root'
 	if(tvec.size() == 1){
 		//cout << "exit" << endl;
@@ -107,14 +107,14 @@ void QueryOptimizer::Optimize(TableList* _tables, AndList* _predicate,
 			}
 			//stemp = temp->next;
 		}
-		cout << "Check point 1.5, jNodes values"<< endl;
-		for(int i = 0; i < jNodes.size();i++){
-			cout << "[";
-			for(int j = 0; j < jNodes[i]->tables.size();j++){
-				cout << jNodes[i]->tables[j] <<", ";
-			}
-			cout << "] --" << jNodes[i]->size << endl;
-		}		
+		// cout << "Check point 1.5, jNodes values"<< endl;
+		// for(int i = 0; i < jNodes.size();i++){
+		// 	cout << "[";
+		// 	for(int j = 0; j < jNodes[i]->tables.size();j++){
+		// 		cout << jNodes[i]->tables[j] <<", ";
+		// 	}
+		// 	cout << "] --" << jNodes[i]->size << endl;
+		// }		
 		int min = jNodes[0]->size;
 		int index = 0;
 		for(int i = 1; i < jNodes.size();i++){

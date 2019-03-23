@@ -40,7 +40,7 @@ struct OptimizationTree {
 	Schema schema;
 
 	~OptimizationTree(){
-		cout << "delete OptimizationTree node" << endl;
+		//cout << "delete OptimizationTree node" << endl;
 	}
 };
 // struct tuple{

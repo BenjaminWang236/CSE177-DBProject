@@ -39,15 +39,17 @@ void QueryCompiler::Compile(TableList* _tables, NameList* _attsToSelect,
 		if(!catalog->GetDataFile(name,file)){
 			exit(-1);
 		}
+		//cout << file << endl;
 		//Check if tables exists
 		if(!catalog->GetSchema(name,schema)){
 			exit(-1);
 		}
-		DBFile dFile;								//GET BACK TO THIS need to implement DBFile?
+		DBFile dFile;								
 		//for now just cheese
-		char* cfile = new char[name.length()+1];
-		strcpy(cfile,name.c_str());
-		if(dFile.Open(cfile) == 0){
+		char* cfile = new char[file.length()+1];
+		strcpy(cfile,file.c_str());
+		if(dFile.Open(cfile) == -1){
+			cout << cfile << endl;
 			exit(-1);
 		}
 		scans.push_back(new Scan(schema,dFile));
@@ -597,7 +599,7 @@ void QueryCompiler::Compile(TableList* _tables, NameList* _attsToSelect,
 
 // connect everything in the query execution tree and return
 	//The final step
-	string wat; // Bogus string
+	string wat = "wat.out"; // Bogus string
 	WriteOut* writeOut = new WriteOut(wOut,wat,rP);
 	rP = writeOut;
 	_queryTree.SetRoot(*rP);
