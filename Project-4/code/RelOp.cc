@@ -1,7 +1,9 @@
 #include <iostream>
 #include <string.h>
 #include <sstream>
+#include "EfficientMap.h"
 #include "RelOp.h"
+#include <map>
 
 using namespace std;
 
@@ -256,7 +258,7 @@ DuplicateRemoval::~DuplicateRemoval() {
 }
 
 bool DuplicateRemoval::GetNext(Record& record){
-	
+
 }
 ostream& DuplicateRemoval::print(ostream& _os) {
 	_os << "DISTINCT[{";
@@ -285,25 +287,49 @@ Sum::~Sum() {
 
 bool Sum::GetNext(Record& _record){
 	Type type;
-	stringstream stringSum;
-	char* runningSum;
 	double runningDouble = 0;
 	int runningInt = 0;
+	char* value = new char[100];
+
 	if(!computed){
 		while(producer->GetNext(_record)){
-			type = compute.Apply(_record,runningInt,runningDouble);
+			int tempInt = 0;
+			double tempDouble = 0;
+			type = compute.Apply(_record,tempInt,tempDouble);
+			runningInt+=tempInt;
+			runningDouble+=tempDouble;			
 		}
-		computed = true;
+		//cout << runningDouble << endl;
+
+		//Current position in record is sizeof(int) * (number of atts + 1), number of atts = 1
+		//Therefore current position is 2*sizeof(int)
+		int currentPos = 2*sizeof(int);
+
+		//set up the pointer to the current attribute in the record
+		//i = 0, i + 1 = 1
+		((int*)value)[1] = currentPos;	
+		//Convert data to correct binary representation
 		if(type == Integer){
-			stringSum << runningInt;
-		    runningSum = new char[stringSum.str().length()+1];
+			*((int*)&value[currentPos]) = runningInt;
+			currentPos+=sizeof(int);
 
 		}else if(type == Float){
-			stringSum << runningDouble;
-		    runningSum = new char[stringSum.str().length()+1];			
+			*((double*)&value[currentPos]) = runningDouble;
+		    currentPos+=sizeof(double);			
 		}
-		strcpy(runningSum,stringSum.str().c_str());
-		_record.Consume(runningSum);		
+		//set up the pointer to just past the end of the record
+		((int*)value)[0] = currentPos;
+
+		//copy bits		
+		char* runningSum = new char[currentPos];	
+		memcpy(runningSum,value,currentPos);
+		_record.Consume(runningSum);
+
+		computed = true;
+
+		// _record.print(cout,schemaOut);
+		// cout << endl;
+
 		return true;
 	}
 	return false;
@@ -343,8 +369,116 @@ GroupBy::~GroupBy() {
 	//printf("Deconstructor GroupBy\n");
 }
 
-bool GroupBy:: GetNext(Record& _record){
+// bool GroupBy:: GetNext(Record& _record){
+// 	//Record rec = _record;
+// 	_record.Project(groupingAtts.whichAtts,groupingAtts.numAtts,schemaIn.GetNumAtts());
 
+// 	Schema copy = schemaOut;
+// 	vector <Attribute> atts;
+// 	vector <string> attNames;
+// 	atts = copy.GetAtts();
+// 	for(int i = 1; i < copy.GetNumAtts();i++){
+// 		attNames.push_back(atts[i].name);
+// 	}
+// 	int iter = 0;
+// 	int viter = 1;
+// 	//rec.print(cout, schemaOut);
+// 	while(producer->GetNext(_record)){
+
+// 		int pointer = ((int *) _record.GetBits())[iter + 1];
+// 		if (atts[viter].type == Integer) {
+// 			int *myInt = (int *) &(_record.GetBits()[pointer]);
+// 			cout << *myInt << endl;
+// 		}
+// 		// then is a double
+// 		else if (atts[viter].type == Float) {
+// 			double *myDouble = (double *) &(_record.GetBits()[pointer]);
+// 			cout << *myDouble << endl;
+// 		}
+// 		// then is a character string
+// 		else if (atts[viter].type == String) {
+// 			char *myString = (char *) &(_record.GetBits()[pointer]);
+// 			cout << myString << endl;
+// 		} 
+// 		viter++;
+// 		//if(groups.IsThere())
+// 		return true;
+// 	}
+// 	return false;
+// }
+bool GroupBy:: GetNext(Record& _record){
+	//Record rec = _record;
+	_record.Project(groupingAtts.whichAtts,groupingAtts.numAtts,schemaIn.GetNumAtts());
+
+	Schema copy = schemaOut;
+	vector <Attribute> atts;
+	vector <string> attNames;
+	atts = copy.GetAtts();
+	for(int i = 1; i < copy.GetNumAtts();i++){
+		attNames.push_back(atts[i].name);
+	}
+	int iter = 0;
+	int viter = 1;
+	int runningInt = 0;
+	int runningDouble = 0;
+	//rec.print(cout, schemaOut);
+	while(producer->GetNext(_record)){
+		KeyString name = atts[viter].name;
+		KeyDouble value;
+		int pointer = ((int *) _record.GetBits())[iter + 1];
+		if(groups.IsThere(name)){
+			//cout << "name is found" << endl;
+			if (atts[viter].type == Integer) {
+				int *myInt = (int *) &(_record.GetBits()[pointer]);
+				//cout << *myInt << endl;
+				runningInt+=*myInt;
+				value = groups.Find(name);
+				groups.Remove(name,name,value);
+				value = runningInt;
+				groups.Insert(name,value);
+			}
+			// then is a double
+			else if (atts[viter].type == Float) {
+				double *myDouble = (double *) &(_record.GetBits()[pointer]);
+				//cout << *myDouble << endl;
+				runningDouble+=*myDouble;
+				value = groups.Find(name);
+				groups.Remove(name,name,value);
+				value = runningDouble;
+				groups.Insert(name,value);				
+			}
+			// then is a character string
+			// else if (atts[viter].type == String) {
+			// 	char *myString = (char *) &(_record.GetBits()[pointer]);
+			// 	//cout << myString << endl;
+			// } 
+		}else{
+			cout << "name not found" << endl;
+			cout << name << endl;
+			if (atts[viter].type == Integer) {
+				int *myInt = (int *) &(_record.GetBits()[pointer]);
+				//cout << *myInt << endl;
+				value = *myInt;
+				groups.Insert(name,value);
+			}
+			// then is a double
+			else if (atts[viter].type == Float) {
+				double *myDouble = (double *) &(_record.GetBits()[pointer]);
+				//cout << *myDouble << endl;
+				value = *myDouble;
+				groups.Insert(name,value);
+			}			
+		}
+		viter++;
+		//if(groups.IsThere())
+		return true;
+	}
+	groups.MoveToStart();
+	for(int i = 0; i < groups.Length();i++){
+		cout << groups.CurrentKey()<< ": "<< groups.CurrentData()<< endl;
+		groups.Advance();
+	}
+	return false;
 }
 ostream& GroupBy::print(ostream& _os) {
 	_os << "GROUP BY[ schemaIn: {";

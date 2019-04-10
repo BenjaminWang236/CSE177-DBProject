@@ -3,7 +3,7 @@
 
 #include "EfficientMap.h"
 #include "Keyify.cc"
-
+#include "Record.h"
 #include <cstdlib>
 #include <iostream>
 

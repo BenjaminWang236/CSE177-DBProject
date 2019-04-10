@@ -2,12 +2,14 @@
 #define _REL_OP_H
 
 #include <iostream>
-
+#include <map>
 #include "Schema.h"
 #include "Record.h"
 #include "DBFile.h"
 #include "Function.h"
 #include "Comparison.h"
+#include "EfficientMap.cc"
+#include "Keyify.h"
 #include <fstream>
 
 using namespace std;
@@ -192,6 +194,8 @@ private:
 
 	// operator generating data
 	RelationalOp* producer;
+	EfficientMap<KeyString,KeyDouble> groups;
+	//map<string, double> groups;
 
 public:
 	GroupBy(Schema& _schemaIn, Schema& _schemaOut, OrderMaker& _groupingAtts,
@@ -201,6 +205,7 @@ public:
 	virtual bool GetNext(Record& _record);
 
 	virtual ostream& print(ostream& _os);
+
 };
 
 class WriteOut : public RelationalOp {

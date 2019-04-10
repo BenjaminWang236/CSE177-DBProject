@@ -7,8 +7,8 @@ ifdef linux
 endif
 
 
-main.out:	QueryParser.o QueryLexer.o Schema.o Record.o File.o DBFile.o Comparison.o Function.o RelOp.o Catalog.o QueryOptimizer.o QueryCompiler.o main.o
-	$(CC) -o main.out main.o QueryParser.o QueryLexer.o Schema.o Record.o File.o DBFile.o Comparison.o Function.o RelOp.o Catalog.o QueryOptimizer.o QueryCompiler.o -lfl -lsqlite3
+main.out:	QueryParser.o QueryLexer.o Schema.o Record.o File.o DBFile.o Comparison.o Function.o RelOp.o Catalog.o QueryOptimizer.o QueryCompiler.o main.o Swapify.o EfficientMap.o
+	$(CC) -o main.out main.o QueryParser.o QueryLexer.o Schema.o Record.o File.o DBFile.o Comparison.o Function.o RelOp.o Catalog.o QueryOptimizer.o QueryCompiler.o Swapify.o EfficientMap.o -lfl -lsqlite3
 	 
 main.o:	main.cc
 	$(CC) -c main.cc
@@ -31,7 +31,7 @@ Comparison.o: Schema.cc Record.cc Comparison.cc
 Function.o: Schema.cc Record.cc Function.cc
 	$(CC) -c Function.cc
 
-RelOp.o: Schema.cc Record.cc Comparison.cc RelOp.cc	
+RelOp.o: Schema.cc Record.cc Comparison.cc RelOp.cc	EfficientMap.cc
 	$(CC) -c RelOp.cc
 	
 QueryOptimizer.o: Schema.cc Record.cc Comparison.cc RelOp.cc QueryOptimizer.cc	
@@ -51,6 +51,17 @@ QueryParser.o: QueryParser.y
 QueryLexer.o: QueryLexer.l
 	lex -o QueryLexer.c QueryLexer.l
 	gcc -c QueryLexer.c
+
+Swapify.o: Swapify.cc
+	$(CC) -c Swapify.cc
+
+EfficientMap.o: EfficientMap.h EfficientMap.cc
+	$(CC) -c EfficientMap.cc
+
+Keyify.o: Keyify.h Keyify.cc
+	$(CC) -c Keyify.cc
+
+
 
 
 clean: 
