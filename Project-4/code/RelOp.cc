@@ -257,8 +257,41 @@ DuplicateRemoval::~DuplicateRemoval() {
 	//printf("Deconstructor DuplicateRemoval\n");
 }
 
-bool DuplicateRemoval::GetNext(Record& record){
+bool DuplicateRemoval::GetNext(Record& _record){
+	KeyString key;							//hashtable key
+	stringstream data;						//string containing all data from tuple/record
+	vector<Attribute> att = schema.GetAtts();	//attributes from schema
+	while (producer->GetNext(_record))			//while there are still records 
+	{
+		for (int i = 0; i < schema.GetNumAtts(); i++) {		//for all attributes check if in hashmap
+			int pointer = ((int *)_record.GetBits())[i + 1];	//pointer to current record
+			//is a int
+			if (att[i].type == Integer) {
+				data << att[i].name << " "<< *(int *) &(_record.GetBits()[pointer]);		//gets value in pointer and puts into data
+			}
+			// then is a double
+			else if (att[i].type == Float) {
+				data << att[i].name << " " << *(double *) &(_record.GetBits()[pointer]);	//gets value in pointer and puts into data
 
+			}
+			//is a string
+			else if (att[i].type == String) {
+				string dataString = (char *) &(_record.GetBits()[pointer]);					//gets value in pointer and puts into data
+				data << att[i].name << " " << dataString;
+			}
+			data << " ";					//for debugging readability
+			key = data.str();				//set hashtable key to data
+			
+
+		}
+		//cout << key << endl;
+		if (!map.IsThere(key))				//check if already in hashmap; if not then insert
+		{
+			map.Insert(key, key);
+			return true;
+		}
+	}
+	return false;
 }
 ostream& DuplicateRemoval::print(ostream& _os) {
 	_os << "DISTINCT[{";

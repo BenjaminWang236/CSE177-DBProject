@@ -143,6 +143,8 @@ private:
 	// schema of records in operator
 	Schema schema;
 
+	EfficientMap <KeyString, KeyString> map;
+
 	// operator generating data
 	RelationalOp* producer;
 
